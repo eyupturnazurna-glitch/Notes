@@ -5,1103 +5,645 @@
     <meta charset="UTF-8">
     <meta name="viewport"
         content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Aurora Infinity Elite | AI-Cloud Ecosystem</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
+    <title>Aurora Infinity | Master Edition</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500;600;700;800;900&display=swap"
         rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         :root {
             --bg: #030712;
-            --surface: rgba(255, 255, 255, 0.03);
-            --surface-bright: rgba(255, 255, 255, 0.08);
-            --border: rgba(255, 255, 255, 0.1);
-            --accent: #6366f1;
-            --accent-glow: rgba(99, 102, 241, 0.4);
-            --text: #ffffff;
-            --text-dim: #94a3b8;
-            --danger: #ff4757;
-            --success: #10b981;
-            --ai-color: #22d3ee;
-            --safe-area-bottom: env(safe-area-inset-bottom, 20px);
+            --glass: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.08);
+            --primary: #4f46e5;
+            --accent: #06b6d4;
+            --danger: #ef4444;
+            --text: #f8fafc;
+            --muted: #64748b;
+            --font: 'Outfit', sans-serif;
         }
 
+        /* --- BASE --- */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            font-family: var(--font);
             -webkit-tap-highlight-color: transparent;
-            font-family: 'Outfit', sans-serif;
         }
 
         body {
-            background-color: var(--bg);
+            background: var(--bg);
             color: var(--text);
             height: 100vh;
             overflow: hidden;
-            display: flex;
-            flex-direction: column;
         }
 
-        /* Animated Background */
-        .aura {
-            position: fixed;
-            width: 500px;
-            height: 500px;
-            border-radius: 50%;
-            background: var(--accent-glow);
-            filter: blur(150px);
-            z-index: -1;
-            animation: auraMove 20s infinite alternate;
-        }
-
-        @keyframes auraMove {
-            0% {
-                transform: translate(-20%, -20%) scale(1);
-            }
-
-            100% {
-                transform: translate(60%, 80%) scale(1.5);
-            }
-        }
-
-        /* Auth Component */
-        .auth-overlay {
+        /* --- AUTH SCREEN --- */
+        #authLayer {
             position: fixed;
             inset: 0;
-            background: var(--bg);
-            z-index: 9000;
+            z-index: 9999;
+            background: linear-gradient(135deg, #0f172a 0%, #000000 100%);
             display: flex;
             flex-direction: column;
+            align-items: center;
             justify-content: center;
-            padding: 40px;
-            transition: 0.8s cubic-bezier(0.19, 1, 0.22, 1);
+            padding: 24px;
+            transition: 0.5s;
         }
 
-        .auth-overlay.hidden {
+        #authLayer.hidden {
             transform: translateY(-100%);
             opacity: 0;
             pointer-events: none;
         }
 
         .auth-card {
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid var(--border);
-            border-radius: 40px;
+            background: rgba(255, 255, 255, 0.05);
             padding: 40px;
-            backdrop-filter: blur(40px);
-            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
-            text-align: center;
-        }
-
-        .auth-logo {
-            width: 80px;
-            height: 80px;
-            background: var(--accent);
-            border-radius: 30%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 30px;
-            box-shadow: 0 0 40px var(--accent-glow);
-        }
-
-        .auth-tabs {
-            display: flex;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 18px;
-            padding: 6px;
-            margin-bottom: 30px;
-        }
-
-        .auth-tab {
-            flex: 1;
-            border: none;
-            background: none;
-            padding: 12px;
-            color: var(--text-dim);
-            font-weight: 800;
-            border-radius: 12px;
-            transition: 0.3s;
-            cursor: pointer;
-        }
-
-        .auth-tab.active {
-            background: var(--accent);
-            color: white;
-        }
-
-        .input-box {
+            border-radius: 32px;
             width: 100%;
-            background: rgba(0, 0, 0, 0.2);
+            max-width: 400px;
             border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 18px;
-            color: white;
-            margin-bottom: 15px;
-            outline: none;
-            font-size: 1rem;
-            transition: 0.3s;
+            backdrop-filter: blur(20px);
+            text-align: center;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
         }
 
-        .input-box:focus {
-            border-color: var(--accent);
-            box-shadow: 0 0 20px var(--accent-glow);
+        .input-group {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 16px;
+            padding: 12px;
+            margin-bottom: 12px;
+            border: 1px solid var(--border);
+            display: flex;
+            gap: 10px;
+            align-items: center;
         }
 
-        .btn-prime {
-            width: 100%;
-            background: var(--accent);
+        .input-group input {
+            background: none;
             border: none;
-            padding: 18px;
-            border-radius: 20px;
             color: white;
-            font-weight: 900;
-            font-size: 1.1rem;
-            cursor: pointer;
-            box-shadow: 0 10px 30px var(--accent-glow);
-            transition: 0.3s;
+            outline: none;
+            flex: 1;
+            font-size: 1rem;
         }
 
-        .btn-prime:active {
-            transform: scale(0.96);
-        }
-
-        /* App Layout */
-        .app-container {
+        /* --- MAIN APP LAYOUT --- */
+        .app-view {
             display: flex;
             flex-direction: column;
-            height: 100vh;
+            height: 100%;
             opacity: 0;
             transition: 1s;
+            transform: scale(0.95);
         }
 
-        .app-container.ready {
+        .app-view.visible {
             opacity: 1;
+            transform: scale(1);
         }
 
         header {
-            padding: 30px 25px 15px;
+            padding: 20px;
             display: flex;
             justify-content: space-between;
-            align-items: flex-end;
+            align-items: center;
         }
 
-        .user-profile {
+        .user-pill {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            padding: 8px 16px;
+            border-radius: 50px;
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
+            font-size: 0.9rem;
         }
 
-        .avatar {
-            width: 48px;
-            height: 48px;
-            border-radius: 16px;
-            background: linear-gradient(135deg, var(--accent), var(--ai-color));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 900;
-            box-shadow: 0 4px 15px var(--accent-glow);
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #fbbf24;
+            box-shadow: 0 0 10px #fbbf24;
         }
 
-        /* Navigation */
-        .nav-bar {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: calc(80px + var(--safe-area-bottom));
-            background: rgba(10, 15, 30, 0.85);
-            backdrop-filter: blur(30px);
-            border-top: 1px solid var(--border);
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            padding-bottom: var(--safe-area-bottom);
-            z-index: 1000;
-        }
-
-        .nav-link {
-            background: none;
-            border: none;
-            color: var(--text-dim);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 6px;
-            font-weight: 700;
-            font-size: 0.75rem;
-            cursor: pointer;
-        }
-
-        .nav-link.active {
-            color: var(--accent);
-        }
-
-        .nav-link.ai {
-            color: var(--ai-color);
-        }
-
-        .nav-plus {
-            width: 70px;
-            height: 70px;
-            background: var(--accent);
-            border-radius: 24px;
-            color: white;
-            border: none;
-            transform: translateY(-35px);
-            box-shadow: 0 15px 40px var(--accent-glow);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-        }
-
-        /* Tabs-Content */
-        .scroller {
+        /* --- NOTES GRID --- */
+        .grid-container {
             flex: 1;
             overflow-y: auto;
-            padding: 10px 25px 120px;
-        }
-
-        .notes-list {
+            padding: 20px;
             display: grid;
-            gap: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 16px;
         }
 
-        .note-card {
-            background: var(--surface);
+        .note-item {
+            background: rgba(255, 255, 255, 0.02);
             border: 1px solid var(--border);
-            border-radius: 32px;
-            padding: 25px;
-            transition: 0.3s;
-            border-left: 6px solid var(--accent);
+            border-radius: 20px;
+            padding: 16px;
+            height: 180px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
             position: relative;
+            overflow: hidden;
+            transition: 0.2s;
             cursor: pointer;
         }
 
-        .note-card:active {
-            transform: scale(0.97);
-            background: var(--surface-bright);
+        .note-item:active {
+            transform: scale(0.98);
         }
 
-        .note-card h3 {
-            font-size: 1.3rem;
-            margin-bottom: 8px;
-            font-weight: 800;
-            color: #fff;
-        }
-
-        .note-card p {
-            font-size: 0.95rem;
-            color: var(--text-dim);
-            line-height: 1.6;
+        .note-title {
+            font-weight: 700;
+            color: white;
+            line-height: 1.3;
             display: -webkit-box;
-            -webkit-line-clamp: 3;
+            -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
             overflow: hidden;
         }
 
-        /* Master Editor Elite */
+        .note-preview {
+            font-size: 0.85rem;
+            color: var(--muted);
+            flex: 1;
+            overflow: hidden;
+            opacity: 0.8;
+        }
+
+        .note-date {
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.2);
+            margin-top: auto;
+        }
+
+        /* --- EDITOR MODAL --- */
         .editor-modal {
             position: fixed;
             inset: 0;
+            z-index: 100;
             background: var(--bg);
-            z-index: 8000;
-            display: none;
-            flex-direction: column;
             transform: translateY(100%);
-            transition: 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
         }
 
-        .editor-modal.active {
-            display: flex;
+        .editor-modal.open {
             transform: translateY(0);
         }
 
-        .editor-top {
-            padding: 25px;
-            display: flex;
-            gap: 15px;
-            align-items: center;
+        .editor-toolbar {
+            padding: 12px;
             border-bottom: 1px solid var(--border);
-        }
-
-        .ed-title {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 1.5rem;
-            font-weight: 900;
-            flex: 1;
-            outline: none;
-        }
-
-        .ed-toolbar {
             display: flex;
             gap: 12px;
-            padding: 15px 25px;
-            background: rgba(0, 0, 0, 0.5);
-            border-bottom: 1px solid var(--border);
             overflow-x: auto;
+            background: rgba(0, 0, 0, 0.5);
         }
 
-        .tool-btn {
-            min-width: 44px;
-            height: 44px;
-            background: var(--surface-bright);
-            border: 1px solid var(--border);
+        .toolbar-btn {
+            min-width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            border: none;
+            background: rgba(255, 255, 255, 0.1);
             color: white;
-            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            transition: 0.2s;
-            font-weight: 900;
-            padding: 0 10px;
         }
 
-        .tool-btn:hover {
-            background: rgba(255, 255, 255, 0.1);
+        .toolbar-btn.active {
+            background: var(--primary);
+            color: white;
         }
 
-        .tool-btn.active {
-            background: var(--accent);
-            border-color: var(--accent);
-        }
-
-        #editorContainer {
+        .editor-area {
             flex: 1;
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-        }
-
-        #editorArea {
-            flex: 1;
-            padding: 30px;
-            outline: none;
+            padding: 24px;
+            overflow-y: auto;
             font-size: 1.1rem;
             line-height: 1.6;
-            overflow-y: auto;
+            outline: none;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .editor-area img {
+            max-width: 100%;
+            border-radius: 12px;
+            margin: 10px 0;
+            border: 1px solid var(--border);
+        }
+
+        /* --- DOCK --- */
+        .dock {
+            padding: 16px;
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            background: linear-gradient(to top, var(--bg) 80%, transparent);
             position: relative;
             z-index: 10;
         }
 
-        /* Editor Content Styles */
-        #editorArea img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 16px;
-            margin: 10px 0;
+        .dock-btn {
+            width: 56px;
+            height: 56px;
+            border-radius: 20px;
             border: 1px solid var(--border);
-        }
-
-        #editorArea h1 {
-            font-size: 2rem;
-            color: var(--accent);
-            margin: 10px 0;
-        }
-
-        #editorArea h2 {
-            font-size: 1.6rem;
-            color: var(--ai-color);
-            margin: 8px 0;
-        }
-
-        #editorArea ul,
-        #editorArea ol {
-            margin-left: 20px;
-            color: var(--text-dim);
-        }
-
-        #editorArea b {
-            color: #fff;
-            font-weight: 800;
-        }
-
-        canvas#noteCanvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 20;
-        }
-
-        canvas#noteCanvas.active {
-            pointer-events: all;
-            background: rgba(0, 0, 0, 0.1);
-        }
-
-        /* AI Manager Console */
-        .ai-shell {
+            background: rgba(30, 41, 59, 0.7);
+            color: var(--muted);
+            backdrop-filter: blur(10px);
             display: flex;
-            flex-direction: column;
-            height: 100%;
-            padding-bottom: 80px;
-        }
-
-        .messages {
-            flex: 1;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            padding-bottom: 100px;
-        }
-
-        .msg {
-            max-width: 85%;
-            padding: 16px 20px;
-            border-radius: 26px;
-            line-height: 1.6;
-            font-size: 1rem;
-        }
-
-        .msg.user {
-            background: var(--accent);
-            align-self: flex-end;
-            border-bottom-right-radius: 4px;
-        }
-
-        .msg.ai {
-            background: var(--surface-bright);
-            align-self: flex-start;
-            border-bottom-left-radius: 4px;
-            border: 1px solid rgba(34, 221, 238, 0.2);
-        }
-
-        .ai-input-wrap {
-            position: fixed;
-            bottom: calc(95px + var(--safe-area-bottom));
-            left: 25px;
-            right: 25px;
-            background: rgba(15, 23, 42, 0.95);
-            backdrop-filter: blur(30px);
-            border: 1px solid var(--border);
-            border-radius: 24px;
-            display: flex;
-            padding: 8px;
             align-items: center;
+            justify-content: center;
+            transition: 0.2s;
+            cursor: pointer;
         }
 
-        .hidden {
-            display: none !important;
+        .dock-btn.active {
+            color: white;
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-5px);
+            border-color: rgba(255, 255, 255, 0.2);
         }
 
-        .sync-badge {
-            font-size: 0.7rem;
-            font-weight: 700;
-            color: var(--text-dim);
+        .dock-btn.main {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 10px 30px rgba(79, 70, 229, 0.4);
+            transform: translateY(-10px);
         }
 
-        .sync-badge.live {
-            color: var(--success);
+        /* --- TOAST --- */
+        .toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100px);
+            background: #111;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            border: 1px solid var(--border);
+            z-index: 2000;
+            transition: 0.4s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 10px 40px black;
+        }
+
+        .toast.visible {
+            transform: translateX(-50%) translateY(0);
         }
     </style>
 </head>
 
 <body>
 
-    <div class="aura"></div>
-
-    <!-- Multi-User Auth System -->
-    <div class="auth-overlay" id="authZone">
+    <!-- 1. AUTH SCREEN -->
+    <div id="authLayer">
         <div class="auth-card">
-            <div class="auth-logo"><i data-lucide="sparkles" style="color:white; width:40px; height:40px;"></i></div>
-            <h1 style="font-size:2.2rem; font-weight:900;">Aurora Infinity</h1>
-            <p style="color:var(--text-dim); margin-bottom:30px;">Zeka ve Bulutun Buluştuğu Nokta</p>
+            <div
+                style="font-size:2rem; font-weight:800; margin-bottom:10px; background:linear-gradient(to right, #fff, #6366f1); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">
+                AURORA</div>
+            <div style="color:var(--muted); margin-bottom:30px;">Infinity Ultra Edition</div>
 
-            <div class="auth-tabs">
-                <button class="auth-tab active" id="tabIn" onclick="toggleAuth('in')">Giriş</button>
-                <button class="auth-tab" id="tabUp" onclick="toggleAuth('up')">Kayıt</button>
+            <div class="input-group">
+                <i data-lucide="user" color="#64748b"></i>
+                <input type="text" id="authName" placeholder="Kullanıcı Adı">
             </div>
 
-            <input type="text" id="uInp" class="input-box" placeholder="Kullanıcı Adı">
-            <input type="password" id="pInp" class="input-box" placeholder="Şifre">
-            <button class="btn-prime" id="authSubmit">BAŞLAT</button>
+            <button onclick="login()"
+                style="width:100%; padding:14px; border-radius:16px; border:none; background:var(--primary); color:white; font-weight:600; font-size:1rem; cursor:pointer; margin-top:10px;">
+                Giriş Yap / Başla
+            </button>
+            <div id="authError" style="color:var(--danger); margin-top:15px; font-size:0.9rem; min-height:20px;"></div>
         </div>
     </div>
 
-    <!-- Infinity Ecosystem Shell -->
-    <div class="app-container" id="appShell">
+    <!-- 2. MAIN APP -->
+    <div id="app" class="app-view">
         <header>
-            <div class="user-profile">
-                <div class="avatar" id="uAvatar">A</div>
-                <div>
-                    <h2 id="uDisplayName">Merhaba!</h2>
-                    <p class="sync-badge" id="cloudStatus">Senkronizasyon: Yerel</p>
-                </div>
+            <div class="user-pill">
+                <i data-lucide="user-circle"></i>
+                <span id="displayUser">Misafir</span>
+                <div id="statusDot" class="status-dot"></div>
             </div>
-            <div style="display:flex; gap:12px;">
-                <button class="tool-btn" onclick="document.getElementById('importFile').click()"><i
-                        data-lucide="archive-restore"></i></button>
-                <input type="file" id="importFile" class="hidden" accept=".docau">
-                <button class="tool-btn" style="background:var(--danger);" onclick="logout()"><i
-                        data-lucide="log-out"></i></button>
+            <div style="display:flex; gap:8px;">
+                <button class="dock-btn" style="width:40px; height:40px;" onclick="forceSync()" title="Şimdi Eşitle">
+                    <i data-lucide="refresh-ccw" width="18"></i>
+                </button>
+                <button class="dock-btn" style="width:40px; height:40px;" onclick="logout()" title="Çıkış">
+                    <i data-lucide="log-out" width="18"></i>
+                </button>
             </div>
         </header>
 
-        <!-- NOTES TAB -->
-        <main class="scroller" id="notesTab">
-            <div
-                style="background:var(--surface); border:1px solid var(--border); padding:16px 20px; border-radius:24px; margin-bottom:30px; display:flex; align-items:center; gap:15px; backdrop-filter:blur(20px);">
-                <i data-lucide="search" style="width:20px; color:var(--text-dim);"></i>
-                <input type="text" id="searchBar" placeholder="Evreninde ara..."
-                    style="background:none; border:none; color:white; flex:1; outline:none; font-size:1.1rem;">
-            </div>
-            <div class="notes-list" id="notesGrid"></div>
-        </main>
-
-        <!-- AI TAB -->
-        <main class="scroller hidden" id="aiTab">
-            <div class="ai-shell">
-                <div class="messages" id="chatStream">
-                    <div class="msg ai">Selam! Ben Aurora. Notlarını yönetmen için buradayım.</div>
-                </div>
-                <div class="ai-input-wrap">
-                    <input type="text" id="aiInpField" placeholder="Bir görev ver..."
-                        style="flex:1; background:none; border:none; color:white; outline:none; padding:12px 15px;">
-                    <button class="tool-btn" id="aiFireBtn"
-                        style="background:var(--ai-color); color:black; border:none;"><i
-                            data-lucide="send"></i></button>
-                </div>
-            </div>
-        </main>
-
-        <!-- SETTINGS TAB -->
-        <main class="scroller hidden" id="settingsTab">
-            <h2 style="margin-bottom:25px;">Sistem Ayarları</h2>
-
-            <div class="note-card" style="margin-bottom:20px;">
-                <h3 style="color:var(--ai-color);">Google Sheets Bulut</h3>
-                <p>Apps Script URL'sini girerek verilerini yedekle.</p>
-                <input type="text" id="cloudUrl" class="input-box" style="margin-top:15px;"
-                    placeholder="https://script.google.com/macros/s/...">
-                <button class="btn-prime" style="padding:12px; margin-top:10px;" onclick="saveSettings()">Kaydet & Test
-                    Et</button>
-            </div>
-
-            <div class="note-card" style="margin-bottom:20px;">
-                <h3 style="color:var(--ai-color);">Yapay Zeka (Groq)</h3>
-                <p>API Anahtarın tanımlı.</p>
-                <input type="password" id="groqKey" class="input-box" style="margin-top:15px;" placeholder="gsk_...">
-                <button class="btn-prime" style="padding:12px; margin-top:10px;" onclick="saveSettings()">Anahtarı
-                    Güncelle</button>
-            </div>
-
-            <button class="btn-prime" style="background:var(--danger);" onclick="factoryReset()">FABRİKA AYARLARINA
-                DÖN</button>
-        </main>
-
-        <nav class="nav-bar">
-            <button class="nav-link active" onclick="goTab('notes', this)"><i
-                    data-lucide="layout-grid"></i><span>Odak</span></button>
-            <button class="nav-link" onclick="goTab('ai', this)"><i data-lucide="cpu"></i><span>Asistan</span></button>
-            <button class="nav-plus" id="createNewNoteBtn"><i data-lucide="plus"
-                    style="width:35px; height:35px;"></i></button>
-            <button class="nav-link" onclick="exportPack()"><i data-lucide="hard-drive"></i><span>Yedek</span></button>
-            <button class="nav-link" onclick="goTab('settings', this)"><i
-                    data-lucide="settings"></i><span>Sistem</span></button>
-        </nav>
-    </div>
-
-    <!-- Master Editor Elite -->
-    <div class="editor-modal" id="masterEditor">
-        <div class="editor-top">
-            <input type="text" id="noteHeader" class="ed-title" placeholder="Başlık...">
-            <button class="tool-btn" style="background:var(--success); min-width:60px;" id="masterSave"><i
-                    data-lucide="check"></i></button>
-            <button class="tool-btn" style="background:var(--danger);" onclick="closeMaster()"><i
-                    data-lucide="x"></i></button>
+        <!-- DASHBOARD -->
+        <div id="view-notes" class="grid-container">
+            <!-- Notes inserted here -->
         </div>
 
-        <div class="ed-toolbar">
-            <button class="tool-btn" onclick="format('formatBlock', '<h1>')">H1</button>
-            <button class="tool-btn" onclick="format('formatBlock', '<h2>')">H2</button>
-            <button class="tool-btn" onclick="format('bold')"><i data-lucide="bold"></i></button>
-            <button class="tool-btn" onclick="format('italic')"><i data-lucide="italic"></i></button>
-            <button class="tool-btn" onclick="format('underline')"><i data-lucide="underline"></i></button>
-            <button class="tool-btn" onclick="format('strikeThrough')"><i data-lucide="strikethrough"></i></button>
-            <button class="tool-btn" onclick="format('insertUnorderedList')"><i data-lucide="list"></i></button>
-            <button class="tool-btn" onclick="document.getElementById('pickImage').click()"><i
-                    data-lucide="image"></i></button>
-            <button class="tool-btn" id="activeBrush" onclick="togglePen()"><i data-lucide="pen-tool"></i></button>
-            <button class="tool-btn" onclick="exportDocauSingle()" style="margin-left:auto; color:var(--ai-color);"><i
-                    data-lucide="download"></i></button>
-            <input type="file" id="pickImage" class="hidden" accept="image/*">
-        </div>
-
-        <div id="editorContainer">
-            <div id="editorArea" contenteditable="true" placeholder="Notunu oluştur..."></div>
-            <canvas id="noteCanvas"></canvas>
+        <!-- DOCK -->
+        <div class="dock">
+            <button class="dock-btn active"><i data-lucide="grid"></i></button>
+            <button class="dock-btn main" onclick="newNote()"><i data-lucide="plus" width="28"></i></button>
+            <button class="dock-btn" onclick="aiAction()"><i data-lucide="sparkles"></i></button>
         </div>
     </div>
+
+    <!-- 3. EDITOR -->
+    <div id="editor" class="editor-modal">
+        <div style="padding:15px; display:flex; justify-content:space-between; align-items:center;">
+            <button onclick="closeEditor()"
+                style="background:none; border:none; color:white; font-size:1rem;">İptal</button>
+            <input type="text" id="noteTitle" placeholder="Başlık..."
+                style="background:none; border:none; color:white; font-weight:700; font-size:1.1rem; text-align:center; width:60%;">
+            <button onclick="saveNote()"
+                style="background:var(--primary); border:none; color:white; padding:8px 16px; border-radius:20px; font-weight:600;">Kaydet</button>
+        </div>
+
+        <div class="editor-toolbar">
+            <button class="toolbar-btn" onclick="fmt('bold')"><i data-lucide="bold" width="16"></i></button>
+            <button class="toolbar-btn" onclick="fmt('italic')"><i data-lucide="italic" width="16"></i></button>
+            <button class="toolbar-btn" onclick="addCheck()"><i data-lucide="check-square" width="16"></i></button>
+            <button class="toolbar-btn" onclick="document.getElementById('fileInp').click()"><i data-lucide="image"
+                    width="16"></i></button>
+            <button class="toolbar-btn" onclick="recordVoice()" id="micBtn"><i data-lucide="mic"
+                    width="16"></i></button>
+        </div>
+
+        <div id="noteContent" class="editor-area" contenteditable="true" placeholder="Bir şeyler yaz..."></div>
+    </div>
+
+    <!-- TOAST -->
+    <div id="toast" class="toast">
+        <i data-lucide="info"></i> <span id="toastMsg">Bilgi</span>
+    </div>
+
+    <input type="file" id="fileInp" hidden accept="image/*">
 
     <script>
-        // Aurora Core Logic (Fixed & Enhanced)
-        const DEFAULT_GROQ = "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";
-        let authMode = 'in';
-        let session = JSON.parse(localStorage.getItem('aurora_session')) || null;
-        let notes = JSON.parse(localStorage.getItem('aurora_notes')) || [];
-        // Migration from old keys if needed
-        if (!notes.length && localStorage.getItem('inf_elite_notes')) {
-            notes = JSON.parse(localStorage.getItem('inf_elite_notes'));
-        }
+        // CONFIG
+        const CLOUD_URL = "https://script.google.com/macros/s/AKfycbwRnJlsAzCgDmT2HYiOP-lXH1AJBoo2lw51kB_O0itnmJlIleqdHx6Z6cJQAoX-rSc0vg/exec";
+        const GROQ_KEY = "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";
 
-        let editId = null;
-        let isPen = false;
-        let isDrawing = false;
-        let canvas, ctx;
+        let currentUser = null;
+        let notes = [];
+        let activeNoteId = null;
+        let recognition = null;
 
-        // Init Setup
-        lucide.createIcons();
-        document.getElementById('cloudUrl').value = localStorage.getItem('aurora_gs_url') || '';
-        document.getElementById('groqKey').value = localStorage.getItem('aurora_groq_key') || '';
-
-        // ------------------ AUTH SYSTEM ------------------
-        function toggleAuth(mode) {
-            authMode = mode;
-            document.getElementById('tabIn').classList.toggle('active', mode === 'in');
-            document.getElementById('tabUp').classList.toggle('active', mode === 'up');
-            document.getElementById('authSubmit').innerText = mode === 'in' ? 'GİRİŞ YAP' : 'HESAP OLUŞTUR';
-        }
-
-        document.getElementById('authSubmit').onclick = () => {
-            const u = document.getElementById('uInp').value.trim();
-            const p = document.getElementById('pInp').value.trim();
-            if (!u || !p) return alert("Lütfen alanları doldurun.");
-
-            let users = JSON.parse(localStorage.getItem('aurora_users') || "[]");
-
-            if (authMode === 'up') {
-                if (users.some(x => x.u === u)) return alert("Bu kullanıcı adı alınmış.");
-                users.push({ u, p });
-                localStorage.setItem('aurora_users', JSON.stringify(users));
-                alert("Kayıt başarılı! Giriş yapabilirsiniz.");
-                toggleAuth('in');
-            } else {
-                const user = users.find(x => x.u === u && x.p === p);
-                if (user || (u === 'admin' && p === 'aurora')) {
-                    session = { u };
-                    localStorage.setItem('aurora_session', JSON.stringify(session));
-                    runApp();
-                } else {
-                    alert("Kullanıcı adı veya şifre hatalı.");
-                }
+        // --- AUTH ---
+        function init() {
+            lucide.createIcons();
+            const savedUser = localStorage.getItem('aurora_user');
+            if (savedUser) {
+                currentUser = savedUser;
+                enterApp();
             }
-        };
+        }
+
+        async function login() {
+            const u = document.getElementById('authName').value.trim();
+            if (!u) return;
+            currentUser = u;
+            localStorage.setItem('aurora_user', u);
+            enterApp();
+        }
 
         function logout() {
-            localStorage.removeItem('aurora_session');
+            localStorage.removeItem('aurora_user');
             location.reload();
         }
 
-        function runApp() {
-            document.getElementById('authZone').classList.add('hidden');
-            document.getElementById('appShell').classList.add('ready');
-            document.getElementById('uDisplayName').innerText = `Merhaba, ${session.u}!`;
-            document.getElementById('uAvatar').innerText = session.u[0].toUpperCase();
-            renderNotes();
-            initCanvas();
-            pullFromCloud();
-        }
+        async function enterApp() {
+            document.getElementById('displayUser').innerText = currentUser;
+            document.getElementById('authLayer').classList.add('hidden');
+            document.getElementById('app').classList.add('visible');
 
-        if (session) runApp();
-
-        // ------------------ NOTE MANAGER ------------------
-        function renderNotes() {
-            const grid = document.getElementById('notesGrid');
-            const term = document.getElementById('searchBar').value.toLowerCase();
-            grid.innerHTML = '';
-
-            const myNotes = notes.filter(n => n.owner === session.u &&
-                (n.title.toLowerCase().includes(term) || n.text.toLowerCase().includes(term))
-            );
-
-            // Sort by newest first
-            myNotes.sort((a, b) => b.ts - a.ts);
-
-            myNotes.forEach(n => {
-                const el = document.createElement('div');
-                el.className = 'note-card';
-                el.innerHTML = `<h3>${n.title || 'Adsız Not'}</h3><p>${n.text.substring(0, 120)}...</p>`;
-                if (n.canvasData) el.innerHTML += `<div style="margin-top:10px; font-size:0.75rem; color:var(--ai-color);">🎨 Çizim Var</div>`;
-                el.onclick = () => openEditor(n);
-                grid.appendChild(el);
-            });
-            if (myNotes.length === 0) grid.innerHTML = '<div style="text-align:center; color:var(--text-dim); margin-top:50px;">Henüz not yok. + butonu ile ekle.</div>';
-        }
-
-        document.getElementById('searchBar').oninput = renderNotes;
-        document.getElementById('createNewNoteBtn').onclick = () => openEditor();
-
-        // ------------------ EDITOR & DRAWING ------------------
-        function format(cmd, val = null) { document.execCommand(cmd, false, val); document.getElementById('editorArea').focus(); }
-
-        function openEditor(note = null) {
-            const modal = document.getElementById('masterEditor');
-            modal.classList.add('active');
-            const titleInp = document.getElementById('noteHeader');
-            const area = document.getElementById('editorArea');
-
-            // Reset Canvas
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            isPen = false;
-            document.getElementById('activeBrush').classList.remove('active');
-            canvas.classList.remove('active');
-
-            if (note) {
-                editId = note.id;
-                titleInp.value = note.title;
-                area.innerHTML = note.content;
-                if (note.canvasData) {
-                    const img = new Image();
-                    img.onload = () => ctx.drawImage(img, 0, 0);
-                    img.src = note.canvasData;
-                }
-            } else {
-                editId = null;
-                titleInp.value = '';
-                area.innerHTML = '';
-                area.focus();
-            }
-        }
-
-        function closeMaster() {
-            document.getElementById('masterEditor').classList.remove('active');
-        }
-
-        document.getElementById('masterSave').onclick = () => {
-            const title = document.getElementById('noteHeader').value || 'Adsız Not';
-            const content = document.getElementById('editorArea').innerHTML;
-            const text = document.getElementById('editorArea').innerText;
-            const canvasData = isCanvasEmpty(canvas) ? null : canvas.toDataURL(); // Save space if empty
-
-            const noteObj = {
-                id: editId || Date.now(),
-                title,
-                content,
-                text,
-                canvasData,
-                owner: session.u,
-                ts: Date.now()
-            };
-
-            if (editId) {
-                const idx = notes.findIndex(n => n.id === editId);
-                if (idx > -1) notes[idx] = noteObj;
-            } else {
-                notes.unshift(noteObj);
+            // Load Local
+            const localData = localStorage.getItem('aurora_data_' + currentUser);
+            if (localData) {
+                notes = JSON.parse(localData);
+                render();
             }
 
-            saveLocal();
-            renderNotes();
-            closeMaster();
-            pushToCloud();
-        };
-
-        // Image Insertion
-        document.getElementById('pickImage').onchange = (e) => {
-            if (e.target.files && e.target.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                    // Resize/Compress could be added here for optimization
-                    document.execCommand('insertHTML', false, `<img src="${e.target.result}">`);
-                }
-                reader.readAsDataURL(e.target.files[0]);
-            }
-        };
-
-        // Canvas Logic
-        function initCanvas() {
-            canvas = document.getElementById('noteCanvas');
-            ctx = canvas.getContext('2d');
-
-            const resize = () => {
-                canvas.width = document.getElementById('editorContainer').offsetWidth;
-                canvas.height = document.getElementById('editorContainer').offsetHeight;
-            };
-            resize();
-            window.addEventListener('resize', resize);
-
-            // Mouse Events
-            canvas.addEventListener('mousedown', startDraw);
-            canvas.addEventListener('mousemove', draw);
-            canvas.addEventListener('mouseup', endDraw);
-
-            // Touch Events
-            canvas.addEventListener('touchstart', (e) => { e.preventDefault(); startDraw(e.touches[0]); });
-            canvas.addEventListener('touchmove', (e) => { e.preventDefault(); draw(e.touches[0]); });
-            canvas.addEventListener('touchend', endDraw);
+            // Sync
+            await sync('get');
         }
 
-        function getPos(e) {
-            const rect = canvas.getBoundingClientRect();
-            return { x: e.clientX - rect.left, y: e.clientY - rect.top };
-        }
-
-        function startDraw(e) {
-            if (!isPen) return;
-            isDrawing = true;
-            ctx.beginPath();
-            const pos = getPos(e);
-            ctx.moveTo(pos.x, pos.y);
-        }
-
-        function draw(e) {
-            if (!isDrawing || !isPen) return;
-            const pos = getPos(e);
-            ctx.lineTo(pos.x, pos.y);
-            ctx.strokeStyle = '#22d3ee'; // Neon Cyan
-            ctx.lineWidth = 3;
-            ctx.lineCap = 'round';
-            ctx.stroke();
-        }
-
-        function endDraw() {
-            isDrawing = false;
-        }
-
-        function togglePen() {
-            isPen = !isPen;
-            const btn = document.getElementById('activeBrush');
-            canvas.classList.toggle('active', isPen);
-            btn.classList.toggle('active', isPen);
-        }
-
-        function isCanvasEmpty(c) {
-            const blank = document.createElement('canvas');
-            blank.width = c.width; blank.height = c.height;
-            // A simple approximation. True generic blank check is heavier.
-            return c.toDataURL().length < 5000; // Small threshold, empty canvas dataURL is small
-        }
-
-        // ------------------ CLOUD SYNC (Google Sheets) ------------------
-        async function pushToCloud() {
-            const url = localStorage.getItem('aurora_gs_url');
-            if (!url) return;
-
-            setStatus('Buluta yazılıyor...', '');
+        // --- SYNC ENGINE ---
+        async function sync(action = 'sync') {
+            const dot = document.getElementById('statusDot');
+            dot.style.background = '#f59e0b'; // Orange
+            dot.style.boxShadow = '0 0 10px #f59e0b';
 
             try {
-                // Using no-cors mostly, but let's try standard POST
-                // Apps script requires Content-Type: application/x-www-form-urlencoded or text/plain to avoid CORS preflight issues sometimes
-                const payload = JSON.stringify({
-                    action: 'sync',
-                    username: session.u,
-                    notes: JSON.stringify(notes) // Double stringify to fit in one cell
-                });
+                // 1. PING CHECK (Diagnostic)
+                if (action === 'ping') {
+                    // Just check connection
+                }
 
-                await fetch(url, {
+                // 2. PREPARE PAYLOAD
+                const payload = {
+                    action: action,
+                    username: currentUser,
+                    notes: JSON.stringify(notes) // Stringify inner content
+                };
+
+                // 3. SEND
+                const res = await fetch(CLOUD_URL, {
                     method: 'POST',
-                    body: payload
+                    body: JSON.stringify(payload),
+                    // Standard explicit header. REQUIRES 'Anyone' permission on script.
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' }
                 });
 
-                // Since we might use no-cors or simple POST, accurate response reading can be tricky without correct headers. 
-                // However, if the request doesn't fail, we assume success.
-                setStatus('Senkronize: Bulut ✔️', 'live');
-            } catch (e) {
-                console.error(e);
-                setStatus('Bulut Hatası!', 'danger');
-            }
-        }
+                if (!res.ok) throw new Error('Network ' + res.status);
 
-        async function pullFromCloud() {
-            const url = localStorage.getItem('aurora_gs_url');
-            if (!url) return;
-            setStatus('Buluttan alınıyor...', '');
-
-            try {
-                const payload = JSON.stringify({ action: 'get', username: session.u });
-                const res = await fetch(url, { method: 'POST', body: payload });
                 const data = await res.json();
 
-                if (data.notes) {
-                    if (data.notes.length > 0) {
-                        notes = data.notes;
+                if (data.result === 'error') throw new Error(data.error);
+
+                if (action === 'get' && data.notes) {
+                    if (data.notes.length > 2) { // JSON string "[]" is length 2
+                        notes = JSON.parse(data.notes);
                         saveLocal();
-                        renderNotes();
+                        render();
                     }
-                    setStatus('Senkronize: Bulut ✔️', 'live');
                 }
+
+                dot.style.background = '#10b981'; // Green
+                dot.style.boxShadow = '0 0 10px #10b981';
+                showToast('Bulut Eşitlendi', 'success');
+
             } catch (e) {
                 console.error(e);
+                dot.style.background = '#ef4444'; // Red
+                dot.style.boxShadow = '0 0 10px #ef4444';
+                showToast('Hata: ' + e.message, 'error');
             }
         }
 
-        function setStatus(msg, type) {
-            const el = document.getElementById('cloudStatus');
-            el.innerText = msg;
-            el.className = 'sync-badge ' + type;
+        // --- NOTES LOGIC ---
+        function render() {
+            const c = document.getElementById('view-notes');
+            c.innerHTML = '';
+
+            // Sort by Date Desc
+            const sorted = [...notes].sort((a, b) => b.ts - a.ts);
+
+            sorted.forEach(n => {
+                const div = document.createElement('div');
+                div.className = 'note-item';
+                div.innerHTML = `
+                    <div class="note-title">${n.title || 'Başlıksız'}</div>
+                    <div class="note-preview">${n.text}</div>
+                    <div class="note-date">${new Date(n.ts).toLocaleDateString("tr-TR")}</div>
+                `;
+                div.onclick = () => openEditor(n);
+                c.appendChild(div);
+            });
+            lucide.createIcons();
         }
 
-        function saveSettings() {
-            const url = document.getElementById('cloudUrl').value.trim();
-            const key = document.getElementById('groqKey').value.trim();
+        function newNote() {
+            openEditor({ id: Date.now(), title: '', content: '', text: '', ts: Date.now() });
+        }
 
-            if (url) localStorage.setItem('aurora_gs_url', url);
-            if (key) localStorage.setItem('aurora_groq_key', key);
+        function openEditor(note) {
+            activeNoteId = note.id;
+            document.getElementById('noteTitle').value = note.title;
+            document.getElementById('noteContent').innerHTML = note.content;
+            document.getElementById('editor').classList.add('open');
+        }
 
-            alert('Ayarlar kaydedildi!');
-            pullFromCloud();
+        function closeEditor() {
+            document.getElementById('editor').classList.remove('open');
+            activeNoteId = null;
+        }
+
+        function saveNote() {
+            const title = document.getElementById('noteTitle').value;
+            const content = document.getElementById('noteContent').innerHTML;
+            const text = document.getElementById('noteContent').innerText;
+
+            if (!activeNoteId) activeNoteId = Date.now();
+
+            const idx = notes.findIndex(n => n.id === activeNoteId);
+            const obj = { id: activeNoteId, title, content, text, ts: Date.now() };
+
+            if (idx > -1) notes[idx] = obj;
+            else notes.unshift(obj);
+
+            saveLocal();
+            render();
+            closeEditor();
+            sync('sync');
         }
 
         function saveLocal() {
-            localStorage.setItem('aurora_notes', JSON.stringify(notes));
+            localStorage.setItem('aurora_data_' + currentUser, JSON.stringify(notes));
         }
 
-        // ------------------ FILE EXPORT (DOCAU) ------------------
-        function exportDocauSingle() {
-            const n = notes.find(x => x.id === editId);
-            if (!n) return;
-            downloadFile(JSON.stringify(n), n.title + '.docau');
+        function forceSync() {
+            sync('sync');
         }
 
-        function exportPack() {
-            downloadFile(JSON.stringify(notes), 'aurora_backup_' + new Date().toISOString().slice(0, 10) + '.docau');
-        }
+        // --- EDITOR TOOLS ---
+        function fmt(cmd, val = null) { document.execCommand(cmd, false, val); }
+        function addCheck() { fmt('insertHTML', '<input type="checkbox"> &nbsp;'); }
 
-        function downloadFile(content, fileName) {
-            // Use Blob for better large file support
-            const blob = new Blob([content], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = fileName;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-        }
-
-        document.getElementById('importFile').onchange = (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = (ev) => {
-                try {
-                    const data = JSON.parse(ev.target.result);
-                    if (Array.isArray(data)) {
-                        // Backup file
-                        notes = [...data, ...notes]; // Append imported
-                        // Remove duplicates by ID
-                        notes = notes.filter((v, i, a) => a.findIndex(t => (t.id === v.id)) === i);
-                    } else {
-                        // Single Note
-                        data.id = Date.now(); // New ID to avoid collision
-                        notes.unshift(data);
-                    }
-                    saveLocal();
-                    renderNotes();
-                    alert("Başarıyla içe aktarıldı!");
-                    pushToCloud();
-                } catch (err) {
-                    alert("Dosya bozuk veya hatalı.");
-                }
-            };
-            reader.readAsText(file);
-        };
-
-        function factoryReset() {
-            if (confirm("DİKKAT! Tüm yerel veriler silinecek. Yedeklemediyseniz kaybolur. Emin misiniz?")) {
-                localStorage.clear();
-                location.reload();
+        // IMG COMPRESSION
+        document.getElementById('fileInp').onchange = async (e) => {
+            if (e.target.files[0]) {
+                const msg = showToast('Resim işleniyor...', 'info');
+                const base64 = await compress(e.target.files[0]);
+                fmt('insertHTML', `<img src="${base64}"><br>`);
+                showToast('Resim eklendi!', 'success');
             }
         }
 
-        // ------------------ AI ASSISTANT ------------------
-        document.getElementById('aiFireBtn').onclick = async () => {
-            const inp = document.getElementById('aiInpField');
-            const txt = inp.value.trim();
-            if (!txt) return;
+        function compress(file) {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        const cvs = document.createElement('canvas');
+                        let w = img.width, h = img.height;
+                        const MAX = 600; // Aggressive resize for sync safety
+                        if (w > MAX) { h *= MAX / w; w = MAX; }
+                        cvs.width = w; cvs.height = h;
+                        cvs.getContext('2d').drawImage(img, 0, 0, w, h);
+                        resolve(cvs.toDataURL('image/jpeg', 0.6));
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            });
+        }
 
-            addMsg(txt, 'user');
-            inp.value = '';
+        // VOICE
+        function recordVoice() {
+            if (!'webkitSpeechRecognition' in window) return alert('Tarayıcı desteklemiyor');
+            const r = new webkitSpeechRecognition();
+            r.lang = 'tr-TR';
+            r.start();
+            document.getElementById('micBtn').classList.add('active');
+            r.onresult = e => {
+                fmt('insertText', e.results[0][0].transcript + ' ');
+                document.getElementById('micBtn').classList.remove('active');
+            }
+        }
 
-            const key = localStorage.getItem('aurora_groq_key') || DEFAULT_GROQ;
+        // AI
+        async function aiAction() {
+            const prompt = prompt("Aurora AI'ya ne sormak istersin?");
+            if (!prompt) return;
 
-            // Prepare context
-            const context = {
-                user: session.u,
-                notes_summary: notes.map(n => ({ id: n.id, title: n.title, textPromise: n.text.substring(0, 50) }))
-            };
-
-            const sysPrompt = `Sen Aurora, yardımsever bir AI asistanısın. Kullanıcının notları hakkında bilgi verebilirsin.
-Notlar Özeti: ${JSON.stringify(context.notes_summary)}
-Eğer kullanıcı "Not sil: [ID]" derse, cevabında sadece JSON döndür: {"action": "delete", "id": ID}`;
-
-            addMsg("...", 'ai'); // Loading
-
+            showToast('AI Düşünüyor...', 'info');
             try {
                 const req = await fetch('https://api.groq.com/openai/v1/chat/completions', {
                     method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${key}`,
-                        'Content-Type': 'application/json'
-                    },
+                    headers: { 'Authorization': `Bearer ${GROQ_KEY}`, 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         model: "llama-3.3-70b-versatile",
-                        messages: [
-                            { role: "system", content: sysPrompt },
-                            { role: "user", content: txt }
-                        ]
+                        messages: [{ role: "system", content: "Sen Aurora'sın. Türkçe, kısa ve net cevap ver." }, { role: "user", content: prompt }]
                     })
                 });
-
-                if (!req.ok) throw new Error('API Error');
-
                 const res = await req.json();
-                const aiTxt = res.choices[0].message.content;
+                const ans = res.choices[0].message.content;
 
-                // Remove loading
-                document.querySelector('.msg.ai:last-child').remove();
+                // Add as new note
+                notes.unshift({ id: Date.now(), title: 'AI Yanıtı', content: ans, text: ans, ts: Date.now() });
+                saveLocal(); render(); sync('sync');
+                showToast('AI yanıtı eklendi!', 'success');
 
-                // Check for actions
-                try {
-                    const act = JSON.parse(aiTxt);
-                    if (act.action === 'delete') {
-                        notes = notes.filter(n => n.id != act.id);
-                        saveLocal();
-                        renderNotes();
-                        pushToCloud();
-                        addMsg(`Not (ID: ${act.id}) silindi.`, 'ai');
-                    } else {
-                        addMsg(aiTxt, 'ai');
-                    }
-                } catch (e) {
-                    // Normal text response
-                    addMsg(aiTxt, 'ai');
-                }
-
-            } catch (e) {
-                document.querySelector('.msg.ai:last-child').innerText = "Hata: API anahtarını kontrol et veya interneti sına. (" + e.message + ")";
-            }
-        };
-
-        function addMsg(txt, type) {
-            const d = document.createElement('div');
-            d.className = `msg ${type}`;
-            d.innerText = txt;
-            const c = document.getElementById('chatStream');
-            c.appendChild(d);
-            c.scrollTop = c.scrollHeight;
+            } catch (e) { alert(e.message); }
         }
 
-        // Tab Navigation
-        function goTab(t, btn) {
-            document.querySelectorAll('.scroller').forEach(e => e.classList.add('hidden'));
-            document.getElementById(t + 'Tab').classList.remove('hidden');
-            document.querySelectorAll('.nav-link').forEach(e => e.classList.remove('active', 'ai'));
-            if (t === 'ai') btn.classList.add('ai'); else btn.classList.add('active');
+        function showToast(msg, type) {
+            const t = document.getElementById('toast');
+            document.getElementById('toastMsg').innerText = msg;
+            t.style.border = type === 'error' ? '1px solid red' : '1px solid #333';
+            t.classList.add('visible');
+            setTimeout(() => t.classList.remove('visible'), 3000);
         }
 
+        init();
     </script>
 </body>
 
