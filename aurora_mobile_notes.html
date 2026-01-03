@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Aurora Ultra Pro | Master Final</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --bg: #020617;
+            --surface: rgba(255, 255, 255, 0.03);
+            --surface-bright: rgba(255, 255, 255, 0.08);
+            --border: rgba(255, 255, 255, 0.1);
+            --accent: #6366f1;
+            --accent-glow: rgba(99, 102, 241, 0.4);
+            --text: #f8fafc;
+            --text-dim: #94a3b8;
+            --danger: #ef4444;
+            --success: #10b981;
+            --ai: #22d3ee;
+            --safe-bottom: env(safe-area-inset-bottom, 20px);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Auth Screen */
+        .auth-overlay {
+            position: fixed;
+            inset: 0;
+            background: var(--bg);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 40px;
+            transition: 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .auth-overlay.hidden {
+            transform: translateY(-100%);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .auth-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 30px;
+            border-radius: 30px;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 15px;
+        }
+
+        .input-group input {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 16px;
+            color: white;
+            outline: none;
+            transition: 0.3s;
+            font-size: 1rem;
+        }
+
+        .input-group input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 15px var(--accent-glow);
+        }
+
+        .btn-auth {
+            width: 100%;
+            padding: 18px;
+            border-radius: 16px;
+            border: none;
+            background: var(--accent);
+            color: white;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: 0 4px 20px var(--accent-glow);
+            transition: 0.3s;
+        }
+
+        .btn-auth:active {
+            transform: scale(0.98);
+        }
+
+        /* Main App */
+        .app {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            opacity: 1;
+            transition: 0.5s;
+        }
+
+        header {
+            padding: 30px 20px 15px;
+            background: linear-gradient(to bottom, var(--bg), transparent);
+            z-index: 10;
+        }
+
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .avatar {
+            width: 46px;
+            height: 46px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, var(--accent), var(--ai));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            color: white;
+            box-shadow: 0 4px 12px var(--accent-glow);
+        }
+
+        /* Tab System */
+        .content-area {
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .tab-pane {
+            position: absolute;
+            inset: 0;
+            padding: 10px 20px 100px;
+            overflow-y: auto;
+            display: none;
+            flex-direction: column;
+            opacity: 0;
+            transition: 0.4s;
+        }
+
+        .tab-pane.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        /* Notes Card */
+        .notes-grid {
+            display: grid;
+            gap: 20px;
+        }
+
+        .note-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 28px;
+            padding: 22px;
+            transition: 0.3s;
+            border-left: 5px solid var(--accent);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .note-card:active {
+            transform: scale(0.97);
+            background: var(--surface-bright);
+        }
+
+        .note-card h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .note-card .preview-text {
+            font-size: 0.9rem;
+            color: var(--text-dim);
+            line-height: 1.5;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .note-card img {
+            width: 100%;
+            border-radius: 16px;
+            margin-top: 12px;
+            max-height: 180px;
+            object-fit: cover;
+        }
+
+        /* AI Chat */
+        .msg-container {
+            padding-bottom: 120px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .msg {
+            max-width: 85%;
+            padding: 15px 20px;
+            border-radius: 24px;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .msg.user {
+            background: var(--accent);
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+            box-shadow: 0 4px 12px var(--accent-glow);
+        }
+
+        .msg.ai {
+            background: var(--surface-bright);
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+            border: 1px solid rgba(34, 211, 238, 0.2);
+        }
+
+        .ai-input-fixed {
+            position: fixed;
+            bottom: calc(90px + var(--safe-bottom));
+            left: 20px;
+            right: 20px;
+            background: rgba(15, 23, 42, 0.9);
+            backdrop-filter: blur(25px);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            display: flex;
+            padding: 8px;
+            align-items: center;
+            z-index: 100;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .ai-input-fixed input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: white;
+            padding: 12px 18px;
+            outline: none;
+            font-size: 1rem;
+        }
+
+        /* Master Editor */
+        .editor-view {
+            position: fixed;
+            inset: 0;
+            background: var(--bg);
+            z-index: 8000;
+            display: none;
+            flex-direction: column;
+            transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: translateY(100%);
+        }
+
+        .editor-view.active {
+            display: flex;
+            transform: translateY(0);
+        }
+
+        .editor-top {
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .editor-tools {
+            padding: 10px 20px;
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .tool-btn {
+            background: var(--surface-bright);
+            border: none;
+            color: white;
+            min-width: 44px;
+            height: 44px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .tool-btn:active {
+            transform: scale(0.9);
+        }
+
+        .tool-btn.active {
+            background: var(--accent);
+        }
+
+        #richEditor {
+            flex: 1;
+            padding: 25px;
+            outline: none;
+            font-size: 1.15rem;
+            line-height: 1.8;
+            overflow-y: auto;
+            overflow-x: hidden;
+            position: relative;
+            z-index: 1;
+        }
+
+        #richEditor img {
+            max-width: 100%;
+            border-radius: 20px;
+            margin: 15px 0;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        #canvasLayer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        #canvasLayer.active {
+            pointer-events: all;
+        }
+
+        /* Navigation */
+        .nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: calc(75px + var(--safe-bottom));
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(30px);
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding-bottom: var(--safe-bottom);
+            z-index: 1000;
+        }
+
+        .nav-item {
+            color: var(--text-dim);
+            border: none;
+            background: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .nav-item.active {
+            color: var(--accent);
+        }
+
+        .nav-item.ai-active {
+            color: var(--ai);
+        }
+
+        .fab {
+            width: 65px;
+            height: 65px;
+            border-radius: 22px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            transform: translateY(-30px);
+            box-shadow: 0 12px 24px var(--accent-glow);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        /* Settings Panels */
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+
+        .card h3 {
+            margin-bottom: 15px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .loading-dots {
+            display: flex;
+            gap: 5px;
+            padding: 10px;
+        }
+
+        .dot-pulse {
+            width: 8px;
+            height: 8px;
+            background: var(--ai);
+            border-radius: 50%;
+            animation: pulse 1s infinite alternate;
+        }
+
+        @keyframes pulse {
+            to {
+                opacity: 0.3;
+                transform: scale(0.8);
+            }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Auth System -->
+    <div class="auth-overlay" id="authOverlay">
+        <div class="auth-card">
+            <div style="text-align:center; margin-bottom:40px;">
+                <div class="avatar"
+                    style="width:70px; height:70px; margin:0 auto 20px; border-radius:20px; font-size:1.8rem;">A</div>
+                <h1 style="font-size:2rem; font-weight:800;">Aurora Ultra Pro</h1>
+                <p style="color:var(--text-dim); margin-top:8px;">Başlamak için kullanıcı adı seçin.</p>
+            </div>
+            <div class="input-group">
+                <input type="text" id="authU" placeholder="Kullanıcı Adı">
+            </div>
+            <div class="input-group">
+                <input type="password" id="authP" placeholder="Şifre">
+            </div>
+            <button class="btn-auth" id="loginBtn">Giriş Yap / Kaydol</button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="app hidden" id="appMain">
+        <header>
+            <div class="header-row">
+                <div class="profile">
+                    <div class="avatar" id="navAvatar">U</div>
+                    <div>
+                        <h2 id="welcomeText" style="font-size:1.2rem; font-weight:800;">Merhaba!</h2>
+                        <div
+                            style="display:flex; align-items:center; gap:6px; font-size:0.75rem; color:var(--text-dim);">
+                            <span id="syncIndicator">●</span> <span id="syncStatus">Yerel Mod</span>
+                        </div>
+                    </div>
+                </div>
+                <div style="display:flex; gap:12px;">
+                    <button class="tool-btn" onclick="document.getElementById('importFile').click()"><i
+                            data-lucide="file-down"></i></button>
+                    <input type="file" id="importFile" accept=".docau" class="hidden">
+                    <button class="tool-btn" id="logoutBtn"><i data-lucide="log-out"></i></button>
+                </div>
+            </div>
+        </header>
+
+        <main class="content-area">
+            <!-- Notes Tab -->
+            <div class="tab-pane active" id="tabNotes">
+                <div
+                    style="background:var(--surface); border:1px solid var(--border); border-radius:20px; padding:14px 20px; display:flex; align-items:center; gap:14px; margin-bottom:25px; backdrop-filter:blur(10px);">
+                    <i data-lucide="search" style="width:20px; color:var(--text-dim);"></i>
+                    <input type="text" id="searchInput" placeholder="Her şeyi ara..."
+                        style="background:transparent; border:none; color:white; outline:none; flex:1; font-size:1rem;">
+                </div>
+                <div class="notes-grid" id="notesList"></div>
+            </div>
+
+            <!-- AI Tab -->
+            <div class="tab-pane" id="tabAI">
+                <div class="msg-container" id="aiChat">
+                    <div class="msg ai">Selam! Ben Aurora AI. Notlarını yönetebilir, resimlerini analiz edebilir veya
+                        yeni dökümanlar oluşturabilirim. Ne yapalım?</div>
+                </div>
+                <div class="ai-input-fixed">
+                    <input type="text" id="aiInput" placeholder="Müdüre komut ver...">
+                    <button class="tool-btn" id="aiSend" style="background:var(--ai); color:black; border:none;"><i
+                            data-lucide="send"></i></button>
+                </div>
+            </div>
+
+            <!-- Settings Tab -->
+            <div class="tab-pane" id="tabSettings">
+                <div class="card">
+                    <h3><i data-lucide="cloud"></i> Google Sheets Bulut</h3>
+                    <p style="font-size:0.85rem; color:var(--text-dim); margin-bottom:15px;">Apps Script URL'nizi buraya
+                        yapıştırarak senkronizasyonu başlatın.</p>
+                    <input type="text" id="gsUrl" class="input-group"
+                        style="width:100%; border-radius:12px; background:rgba(0,0,0,0.3); padding:14px; margin-bottom:12px; color:white; border:1px solid var(--border);"
+                        placeholder="https://script.google.com/macros/s/.../exec">
+                    <button class="btn-auth" style="padding:12px;" onclick="saveCloudSettings()">Bağlan & Senkronize
+                        Et</button>
+                </div>
+                <div class="card">
+                    <h3><i data-lucide="database"></i> Yedekleme</h3>
+                    <button class="btn-auth" style="background:var(--surface-bright); margin-bottom:10px;"
+                        onclick="exportAllNotes()">Tüm Notları İndir (.docau)</button>
+                    <button class="btn-auth" style="background:var(--danger);" onclick="factoryReset()">Uygulamayı
+                        Sıfırla</button>
+                </div>
+            </div>
+        </main>
+
+        <nav class="nav">
+            <button class="nav-item active" id="navNotesBtn" onclick="switchTab('notes')"><i
+                    data-lucide="layout"></i><span>Notlarım</span></button>
+            <button class="nav-item" id="navAIBtn" onclick="switchTab('ai')"><i
+                    data-lucide="cpu"></i><span>Asistan</span></button>
+            <button class="fab" id="addNewBtn"><i data-lucide="plus" style="width:30px; height:30px;"></i></button>
+            <button class="nav-item" id="navSettingsBtn" onclick="switchTab('settings')"><i
+                    data-lucide="settings"></i><span>Ayarlar</span></button>
+            <button class="nav-item" onclick="exportAllNotes()"><i data-lucide="archive"></i><span>Dışa
+                    Aktar</span></button>
+        </nav>
+    </div>
+
+    <!-- Master Pro Editor -->
+    <div class="editor-view" id="editorView">
+        <div class="editor-top">
+            <input type="text" id="editTitle" placeholder="Başlıksız Not"
+                style="background:transparent; border:none; color:white; font-size:1.6rem; font-weight:800; outline:none; flex:1;">
+            <div style="display:flex; gap:12px;">
+                <button class="tool-btn" id="saveBtn" style="background:var(--success);"><i
+                        data-lucide="check-check"></i></button>
+                <button class="tool-btn" onclick="closeEditor()"><i data-lucide="x"></i></button>
+            </div>
+        </div>
+        <div class="editor-tools">
+            <button class="tool-btn" onclick="format('bold')"><i data-lucide="bold"></i></button>
+            <button class="tool-btn" onclick="format('italic')"><i data-lucide="italic"></i></button>
+            <button class="tool-btn" onclick="format('underline')"><i data-lucide="underline"></i></button>
+            <button class="tool-btn" onclick="document.getElementById('pickImg').click()"><i
+                    data-lucide="image"></i></button>
+            <button class="tool-btn" id="canvasBtn"><i data-lucide="pencil"></i></button>
+            <button class="tool-btn" onclick="aiRefineNote()" style="color:var(--ai)"><i
+                    data-lucide="sparkles"></i></button>
+            <button class="tool-btn" onclick="exportSingle()" style="margin-left:auto;"><i
+                    data-lucide="download"></i></button>
+            <input type="file" id="pickImg" accept="image/*" class="hidden">
+        </div>
+        <div style="position:relative; flex:1; display:flex; flex-direction:column; overflow:hidden;">
+            <div id="richEditor" contenteditable="true" placeholder="Notunu buraya yazmaya başla..."></div>
+            <canvas id="canvasLayer"></canvas>
+        </div>
+    </div>
+
+    <script>
+        // CONFIG
+        const GROQ_KEY = "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";
+
+        // STATE
+        let session = JSON.parse(localStorage.getItem('au_session')) || null;
+        let notes = JSON.parse(localStorage.getItem('au_notes_v3')) || [];
+        let curId = null;
+        let drawingMode = false, isDrawing = false;
+        let canv, ctx;
+
+        lucide.createIcons();
+
+        // 1. AUTH & STARTUP
+        document.getElementById('loginBtn').onclick = () => {
+            const u = document.getElementById('authU').value.trim();
+            const p = document.getElementById('authP').value.trim();
+            if (!u || !p) return alert('Kullanıcı adı ve şifre girin.');
+            session = { u };
+            localStorage.setItem('au_session', JSON.stringify(session));
+            location.reload();
+        };
+
+        document.getElementById('logoutBtn').onclick = () => { if (confirm('Çıkış yap?')) { localStorage.removeItem('au_session'); location.reload(); } };
+
+        if (session) {
+            document.getElementById('authOverlay').classList.add('hidden');
+            document.getElementById('appMain').classList.remove('hidden');
+            document.getElementById('welcomeText').innerText = `Selam, ${session.u}!`;
+            document.getElementById('navAvatar').innerText = session.u[0].toUpperCase();
+            renderNotes();
+            initDrawing();
+            pullCloud();
+        }
+
+        // 2. NAV & UI
+        function switchTab(t) {
+            document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active', 'ai-active'));
+            document.getElementById(`tab${t.charAt(0).toUpperCase() + t.slice(1)}`).classList.add('active');
+            const btn = document.getElementById(`nav${t.charAt(0).toUpperCase() + t.slice(1)}Btn`);
+            if (t === 'ai') btn.classList.add('ai-active'); else btn.classList.add('active');
+        }
+
+        // 3. EDITOR LOGIC
+        function format(c, v = null) { document.execCommand(c, false, v); }
+
+        function openEditor(note = null) {
+            document.getElementById('editorView').classList.add('active');
+            const ed = document.getElementById('richEditor');
+            const ti = document.getElementById('editTitle');
+            if (note) {
+                curId = note.id;
+                ti.value = note.title;
+                ed.innerHTML = note.content;
+                if (note.drawing) {
+                    let img = new Image();
+                    img.onload = () => ctx.drawImage(img, 0, 0);
+                    img.src = note.drawing;
+                } else ctx.clearRect(0, 0, canv.width, canv.height);
+            } else {
+                curId = null;
+                ti.value = '';
+                ed.innerHTML = '';
+                ctx.clearRect(0, 0, canv.width, canv.height);
+                ed.focus();
+            }
+        }
+
+        function closeEditor() { document.getElementById('editorView').classList.remove('active'); }
+
+        document.getElementById('saveBtn').onclick = () => {
+            const title = document.getElementById('editTitle').value || 'Başlıksız Not';
+            const content = document.getElementById('richEditor').innerHTML;
+            const drawing = canv.toDataURL();
+            if (curId) {
+                notes = notes.map(n => n.id === curId ? { ...n, title, content, drawing, time: Date.now() } : n);
+            } else {
+                notes.unshift({ id: Date.now(), title, content, drawing, user: session.u, time: Date.now() });
+            }
+            saveLocal();
+            renderNotes();
+            closeEditor();
+            pushCloud();
+        };
+
+        function renderNotes() {
+            const list = document.getElementById('notesList');
+            const term = document.getElementById('searchInput').value.toLowerCase();
+            list.innerHTML = '';
+            notes.filter(n => n.user === session.u && (n.title.toLowerCase().includes(term) || n.content.toLowerCase().includes(term)))
+                .forEach(n => {
+                    const card = document.createElement('div');
+                    card.className = 'note-card';
+                    card.innerHTML = `<h3>${n.title}</h3><div class="preview-text">${n.content.replace(/<[^>]*>?/gm, ' ')}</div>`;
+                    if (n.content.includes('<img')) card.innerHTML += '<div style="margin-top:10px; color:var(--ai); font-size:0.7rem; font-weight:700;">PHOTO ATTACHED 🖼️</div>';
+                    card.onclick = () => openEditor(n);
+                    list.appendChild(card);
+                });
+            lucide.createIcons();
+        }
+
+        document.getElementById('addNewBtn').onclick = () => openEditor();
+        document.getElementById('searchInput').oninput = renderNotes;
+
+        // 4. IMAGE ATTACH
+        document.getElementById('pickImg').onchange = (e) => {
+            const file = e.target.files[0];
+            const r = new FileReader();
+            r.onload = (ev) => {
+                const img = `<img src="${ev.target.result}">`;
+                format('insertHTML', img);
+            };
+            r.readAsDataURL(file);
+        };
+
+        // 5. DRAWING LAYER
+        function initDrawing() {
+            canv = document.getElementById('canvasLayer');
+            ctx = canv.getContext('2d');
+            const res = () => { canv.width = document.getElementById('richEditor').offsetWidth; canv.height = document.getElementById('richEditor').offsetHeight; };
+            res(); window.onresize = res;
+
+            const get = e => { const b = canv.getBoundingClientRect(); const t = e.touches ? e.touches[0] : e; return { x: t.clientX - b.left, y: t.clientY - b.top }; };
+            const start = e => { if (!drawingMode) return; isDrawing = true; const p = get(e); ctx.beginPath(); ctx.moveTo(p.x, p.y); };
+            const move = e => { if (!isDrawing) return; const p = get(e); ctx.lineTo(p.x, p.y); ctx.strokeStyle = 'white'; ctx.lineWidth = 3; ctx.stroke(); };
+            const stop = () => isDrawing = false;
+
+            canv.addEventListener('mousedown', start); canv.addEventListener('mousemove', move); window.addEventListener('mouseup', stop);
+            canv.addEventListener('touchstart', start); canv.addEventListener('touchmove', move); canv.addEventListener('touchend', stop);
+        }
+
+        document.getElementById('canvasBtn').onclick = () => {
+            drawingMode = !drawingMode;
+            canv.classList.toggle('active', drawingMode);
+            document.getElementById('canvasBtn').classList.toggle('active', drawingMode);
+        };
+
+        // 6. AI COMMAND CENTER
+        document.getElementById('aiSend').onclick = async () => {
+            const inp = document.getElementById('aiInput');
+            const val = inp.value.trim(); if (!val) return;
+            addChat(val, 'user'); inp.value = '';
+
+            const sys = `Sen Aurora Ultra Pro'sun. Aşağıdaki notlara erişimin var: ${JSON.stringify(notes.map(n => ({ id: n.id, title: n.title }))) باسم.
+                Kullanıcı "sil", "bul", "özetle" yazarsa sonuna[ACTION: CMD:ARG]ekle.Örn: [ACTION: DELETE: id].
+                    Yeteneklerin: DELETE, PIN, SEARCH.Cevapların kısa ve premium olsun.`;
+            
+            const l = showLoad();
+            try {
+                const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+                    method:'POST', headers:{'Authorization':`Bearer ${ GROQ_KEY } `, 'Content-Type':'application/json'},
+                    body: JSON.stringify({ model:"llama-3.3-70b-versatile", messages:[{role:"system", content:sys}, {role:"user", content:val}] })
+                });
+                const d = await res.json();
+                const ai = d.choices[0].message.content;
+                l.remove();
+                parseAI(ai);
+                addChat(ai.replace(/\[ACTION:.*\]/g, ''), 'ai');
+            } catch(e) { l.remove(); addChat("Bağlantı koptu.", 'ai'); }
+        };
+
+        function addChat(txt, r) {
+            const d = document.createElement('div'); d.className = `msg ${ r } `; d.innerText = txt;
+            document.getElementById('aiChat').appendChild(d);
+            document.getElementById('aiChat').scrollTop = document.getElementById('aiChat').scrollHeight;
+        }
+        function showLoad() { const d = document.createElement('div'); d.className = 'loading-dots'; d.innerHTML = '<div class="dot-pulse"></div><div class="dot-pulse"></div>'; document.getElementById('aiChat').appendChild(d); return d; }
+
+        function parseAI(t) {
+            const m = t.match(/\[ACTION:(.*)\]/);
+            if(m) {
+                const [cmd, arg] = m[1].split(':');
+                if(cmd === 'DELETE') { notes = notes.filter(n => n.id != arg); saveLocal(); renderNotes(); addChat(`SİSTEM: ${ arg } silindi.`, 'ai'); pushCloud(); }
+            }
+        }
+
+        async function aiRefineNote() {
+            const ed = document.getElementById('richEditor');
+            const old = ed.innerHTML;
+            ed.innerHTML = "<i>AI Düzenliyor...</i>";
+            try {
+                const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+                    method:'POST', headers:{'Authorization':`Bearer ${ GROQ_KEY }`, 'Content-Type':'application/json'},
+                    body: JSON.stringify({ model:"llama-3.3-70b-versatile", messages:[{role:"system", content:"Profesyonel bir not editörü gibi davran. Gelen HTML metni temizle, başlıklar ekle ve SADECE HTML döndür."}, {role:"user", content:old}] })
+                });
+                const d = await res.json();
+                ed.innerHTML = d.choices[0].message.content;
+            } catch(e) { ed.innerHTML = old; }
+        }
+
+        // 7. CLOUD & FILE
+        function saveLocal() { localStorage.setItem('au_notes_v3', JSON.stringify(notes)); }
+
+        async function pushCloud() {
+            const url = localStorage.getItem('au_gs_url'); if(!url) return;
+            document.getElementById('syncStatus').innerText = "Buluta Gönderiliyor...";
+            try {
+                await fetch(url, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: 'sync', username: session.u, notes: JSON.stringify(notes) }) });
+                document.getElementById('syncStatus').innerText = "Bulut Uyumlu ✅";
+                document.getElementById('syncIndicator').style.color = 'var(--success)';
+            } catch(e) { document.getElementById('syncStatus').innerText = "Hata ⚠️"; }
+        }
+
+        async function pullCloud() {
+            const url = localStorage.getItem('au_gs_url'); if(!url) return;
+            try {
+                const res = await fetch(url, { method: 'POST', body: JSON.stringify({ action: 'get', username: session.u }) });
+                const d = await res.json();
+                if(d.notes) { notes = d.notes; saveLocal(); renderNotes(); }
+            } catch(e) {}
+        }
+
+        function saveCloudSettings() {
+            const url = document.getElementById('gsUrl').value.trim();
+            if(!url) return alert('URL girin.');
+            localStorage.setItem('au_gs_url', url);
+            pushCloud();
+            alert('Bulut yapılandırıldı.');
+        }
+
+        function exportSingle() {
+            const n = notes.find(x => x.id === curId);
+            const data = btoa(unescape(encodeURIComponent(JSON.stringify(n))));
+            const a = document.createElement('a'); a.href = 'data:application/octet-stream;base64,' + data; a.download = n.title + '.docau'; a.click();
+        }
+
+        function exportAllNotes() {
+            const data = btoa(unescape(encodeURIComponent(JSON.stringify(notes))));
+            const a = document.createElement('a'); a.href = 'data:application/octet-stream;base64,' + data; a.download = 'aurora_backup.docau'; a.click();
+        }
+
+        document.getElementById('importFile').onchange = (e) => {
+            const r = new FileReader(); r.onload = (ev) => {
+                const d = JSON.parse(decodeURIComponent(escape(atob(ev.target.result))));
+                if(Array.isArray(d)) notes = [...d, ...notes]; else notes.unshift(d);
+                saveLocal(); renderNotes(); alert('Notlar Yüklendi!'); pushCloud();
+            };
+            r.readAsText(e.target.files[0]);
+        };
+
+        function factoryReset() { if(confirm('Tüm veriler temizlensin mi?')) { localStorage.clear(); location.reload(); } }
+    </script>
+</body>
+
+</html>
